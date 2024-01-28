@@ -4,7 +4,8 @@ import { Socket } from 'socket.io';
 @Injectable()
 export class SocketService {
   private connectedClients: Map<string, Socket> = new Map();
-  private rooms: Map<string, string[]> = new Map();
+  private rooms: Map<string, { clientId: string; peerId: string }[]> =
+    new Map();
 
   handleConnection(socket: Socket): void {
     const clientId = socket.id;
@@ -26,13 +27,13 @@ export class SocketService {
 
     // Remove the client from any rooms it may have joined
     this.rooms.forEach((clients, room) => {
-      const index = clients.indexOf(clientId);
+      const index = clients.findIndex((client) => client.clientId === clientId);
       if (index !== -1) {
         clients.splice(index, 1);
         this.sendToRoom(room, 'message', `${clientId} left the room`);
 
         // Check if the room is empty after removing the client
-        if (clients.length === 0) {
+        if (clients.length < 2) {
           // Remove the room if it's empty
           this.rooms.delete(room);
         }
@@ -45,27 +46,6 @@ export class SocketService {
     console.log(`Client disconnected: ${clientId}`);
   }
 
-  // joinRoom(clientId: string): void {
-  //   // Find an available room or create a new one
-  //   const availableRoom = this.findAvailableRoom()
-
-  //   // Create a new room with a random name
-  //   const generatedRoomName = this.generateRandomRoomName()
-
-  //   // Check if the room has space
-  //   const clientsInRoom = this.rooms.get(availableRoom);
-  //   if (clientsInRoom.length < 2) {
-  //     // Join the room
-  //     clientsInRoom.push(clientId);
-  //     this.sendToRoom(availableRoom, 'message', `${clientId} joined the room`);
-  //   } else {
-  //     // make new room here with generatedRoomName <-------------
-
-  //     // Room is full, send a message to the client
-  //     this.sendToClient(clientId, 'message', 'Room is full');
-  //   }
-  // }
-
   private updateGuestCountAndBroadcast(socket: Socket): void {
     const guestCount = this.connectedClients.size;
 
@@ -76,47 +56,63 @@ export class SocketService {
     socket.emit('guestCount', guestCount);
   }
 
-  joinRoom(clientId: string): void {
-    // Find an available room or create a new one
+  joinRoom(clientId: string, peerId: string): void {
     const availableRoom = this.findAvailableRoom();
+    const generatedRoomName = availableRoom || this.generateRandomRoomName();
+
+    let clientsInRoom = this.rooms.get(generatedRoomName) || [];
 
     // Check if the room has space
-    if (availableRoom) {
-      const clientsInRoom = this.rooms.get(availableRoom);
-      if (clientsInRoom.length < 2) {
-        // Join the existing room
-        clientsInRoom.push(clientId);
-        this.sendToRoom(
-          availableRoom,
-          'message',
-          `${clientId} joined the room`,
-        );
-        return;
-      }
+    if (clientsInRoom.length < 2) {
+      // Join the existing room
+      clientsInRoom.push({ clientId, peerId });
+      this.sendToRoom(
+        generatedRoomName,
+        'message',
+        `${clientId} joined the room`,
+      );
+
+      // Send the list of existing clients to all clients in the room
+      const existingClients = clientsInRoom.map((client) => ({
+        clientId: client.clientId,
+        peerId: client.peerId,
+      }));
+
+      this.sendToRoom(generatedRoomName, 'guestParticipants', existingClients);
+
+      // Update the room
+      this.rooms.set(generatedRoomName, clientsInRoom);
+    } else {
+      // Create a new room if the existing one is full
+      clientsInRoom = [{ clientId, peerId }];
+      this.sendToRoom(
+        generatedRoomName,
+        'message',
+        `${clientId} joined the room`,
+      );
+
+      // Create new room
+      this.rooms.set(generatedRoomName, clientsInRoom);
     }
-
-    // Create a new room with a generated name
-    const generatedRoomName = this.generateRandomRoomName();
-
-    // Create the room if it doesn't exist
-    this.rooms.set(generatedRoomName, [clientId]);
-
-    // Join the room
-    this.sendToRoom(
-      generatedRoomName,
-      'message',
-      `${clientId} joined the room`,
-    );
   }
 
   private sendToRoom(roomName: string, event: string, data: any): void {
+    const clientsInRoom = this.rooms.get(roomName) || [];
+
     this.connectedClients.forEach((socket, clientId) => {
-      if (this.rooms.get(roomName)?.includes(clientId)) {
+      // Check if the client is in the room based on clientId
+      const isInRoom = clientsInRoom.some(
+        (client) => client.clientId === clientId,
+      );
+
+      if (isInRoom) {
         socket.emit(event, data);
       }
     });
   }
 
+  //     // Room is full, send a message to the client
+  //     this.sendToClient(clientId, 'message', 'Room is full');
   private sendToClient(clientId: string, event: string, data: any): void {
     const socket = this.connectedClients.get(clientId);
     if (socket) {

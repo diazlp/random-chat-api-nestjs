@@ -3,6 +3,8 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  ConnectedSocket,
+  MessageBody,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SocketService } from './socket.service';
@@ -20,8 +22,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(client: Socket): void {
+  handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() peerId: string,
+  ): void {
     const clientId = client.id;
-    this.socketService.joinRoom(clientId);
+    this.socketService.joinRoom(clientId, peerId);
   }
 }
