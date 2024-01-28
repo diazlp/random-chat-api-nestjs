@@ -10,7 +10,12 @@ export class SocketService {
     const clientId = socket.id;
     this.connectedClients.set(clientId, socket);
 
+    // Send client id to the sender
     socket.emit('connected', clientId);
+
+    // Update guest count and broadcast to all connected clients
+    this.updateGuestCountAndBroadcast(socket);
+
     console.log(`Client connected: ${clientId}`);
   }
 
@@ -33,6 +38,9 @@ export class SocketService {
         }
       }
     });
+
+    // Update guest count and broadcast to all connected clients
+    this.updateGuestCountAndBroadcast(socket);
 
     console.log(`Client disconnected: ${clientId}`);
   }
@@ -57,6 +65,16 @@ export class SocketService {
   //     this.sendToClient(clientId, 'message', 'Room is full');
   //   }
   // }
+
+  private updateGuestCountAndBroadcast(socket: Socket): void {
+    const guestCount = this.connectedClients.size;
+
+    // Broadcast the updated guest count to all connected clients except the sender
+    socket.broadcast.emit('guestCount', guestCount);
+
+    // Send the guest count to the sender as well
+    socket.emit('guestCount', guestCount);
+  }
 
   joinRoom(clientId: string): void {
     // Find an available room or create a new one
