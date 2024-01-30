@@ -32,6 +32,9 @@ export class SocketService {
         clients.splice(index, 1);
         this.sendToRoom(room, 'message', `${clientId} left the room`);
 
+        // Send client id to room as client leaves
+        this.sendToRoom(room, 'leaveRoom', clientId);
+
         // Check if the room is empty after removing the client
         if (clients.length < 2) {
           // Remove the room if it's empty
