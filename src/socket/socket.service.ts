@@ -33,7 +33,7 @@ export class SocketService {
         this.sendToRoom(room, 'message', `${clientId} left the room`);
 
         // Send client id to room as client leaves
-        this.sendToRoom(room, 'leaveRoom', clientId);
+        this.sendToRoom(room, 'leaveRandomRoom', clientId);
 
         // Check if the room is empty after removing the client
         if (clients.length < 2) {
@@ -59,7 +59,7 @@ export class SocketService {
     socket.emit('guestCount', guestCount);
   }
 
-  joinRoom(clientId: string, peerId: string): void {
+  joinRandomRoom(clientId: string, peerId: string): void {
     const availableRoom = this.findAvailableRoom();
     const generatedRoomName = availableRoom || this.generateRandomRoomName();
 
@@ -97,6 +97,26 @@ export class SocketService {
       // Create new room
       this.rooms.set(generatedRoomName, clientsInRoom);
     }
+  }
+
+  leaveRandomRoom(clientId: string, peerId: string): void {
+    // Remove the client from any rooms it may have joined
+    this.rooms.forEach((clients, room) => {
+      const index = clients.findIndex((client) => client.clientId === clientId);
+      if (index !== -1) {
+        clients.splice(index, 1);
+        this.sendToRoom(room, 'message', `${clientId} left the room`);
+
+        // Send client id to room as client leaves
+        this.sendToRoom(room, 'leaveRandomRoom', clientId);
+
+        // Check if the room is empty after removing the client
+        if (clients.length < 2) {
+          // Remove the room if it's empty
+          this.rooms.delete(room);
+        }
+      }
+    });
   }
 
   private sendToRoom(roomName: string, event: string, data: any): void {

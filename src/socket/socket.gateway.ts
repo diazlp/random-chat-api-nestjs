@@ -21,12 +21,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.socketService.handleDisconnect(socket);
   }
 
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(
+  @SubscribeMessage('joinRandomRoom')
+  handleJoinRandomRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() peerId: string,
   ): void {
     const clientId = client.id;
-    this.socketService.joinRoom(clientId, peerId);
+    this.socketService.joinRandomRoom(clientId, peerId);
+  }
+
+  @SubscribeMessage('leaveRandomRoom')
+  handleLeaveRandomRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() peerId: string,
+  ): void {
+    const clientId = client.id;
+    this.socketService.leaveRandomRoom(clientId, peerId);
   }
 }
