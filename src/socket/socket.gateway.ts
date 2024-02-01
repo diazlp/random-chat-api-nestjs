@@ -38,4 +38,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const clientId = client.id;
     this.socketService.leaveRandomRoom(clientId, peerId);
   }
+
+  @SubscribeMessage('sendRandomMessage')
+  handleSendMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { clientId: string; message: string; time: Date },
+  ): void {
+    const clientId = client.id;
+    this.socketService.sendRandomMessage(clientId, payload);
+  }
 }

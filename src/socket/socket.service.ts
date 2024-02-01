@@ -65,6 +65,12 @@ export class SocketService {
 
     let clientsInRoom = this.rooms.get(generatedRoomName) || [];
 
+    // Check if the client is already in the room
+    if (clientsInRoom.some((client) => client.clientId === clientId)) {
+      // Client is already in the room, do not perform any action
+      return;
+    }
+
     // Check if the room has space
     if (clientsInRoom.length < 2) {
       // Join the existing room
@@ -104,17 +110,39 @@ export class SocketService {
     this.rooms.forEach((clients, room) => {
       const index = clients.findIndex((client) => client.clientId === clientId);
       if (index !== -1) {
-        clients.splice(index, 1);
-        this.sendToRoom(room, 'message', `${clientId} left the room`);
+        const senderInfo = clients[index];
+
+        // Send a message to all clients in the room about the client leaving
+        this.sendToRoom(
+          room,
+          'message',
+          `${senderInfo.clientId} left the room`,
+        );
 
         // Send client id to room as client leaves
-        this.sendToRoom(room, 'leaveRandomRoom', clientId);
+        this.sendToRoom(room, 'leaveRandomRoom', senderInfo.clientId);
+
+        // Remove the sender from the clients list
+        clients.splice(index, 1);
 
         // Check if the room is empty after removing the client
         if (clients.length < 2) {
           // Remove the room if it's empty
           this.rooms.delete(room);
         }
+      }
+    });
+  }
+
+  sendRandomMessage(
+    clientId: string,
+    payload: { clientId: string; message: string; time: Date },
+  ) {
+    this.rooms.forEach((clients, room) => {
+      const index = clients.findIndex((client) => client.clientId === clientId);
+
+      if (index !== -1) {
+        this.sendToRoom(room, 'sendRandomMessage', payload);
       }
     });
   }
