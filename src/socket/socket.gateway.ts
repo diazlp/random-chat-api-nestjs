@@ -47,4 +47,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const clientId = client.id;
     this.socketService.sendRandomMessage(clientId, payload);
   }
+
+  @SubscribeMessage('userSelectGame')
+  handleSelectGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() title: string,
+  ): void {
+    const clientId = client.id;
+    this.socketService.userSelectGame(clientId, title);
+  }
+
+  @SubscribeMessage('userResponseGameReq')
+  handleUserResponseGameReq(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() response: string,
+  ): void {
+    const clientId = client.id;
+    this.socketService.userResponseGameReq(clientId, response);
+  }
 }

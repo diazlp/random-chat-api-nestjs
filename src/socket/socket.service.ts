@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { ChallengeResponseType } from './socket.enum';
 
 @Injectable()
 export class SocketService {
   private connectedClients: Map<string, Socket> = new Map();
-  private rooms: Map<string, { clientId: string; peerId: string }[]> =
-    new Map();
+  private rooms: Map<
+    string,
+    { clientId: string; peerId: string; isReady?: boolean }[]
+  > = new Map();
 
   handleConnection(socket: Socket): void {
     const clientId = socket.id;
@@ -143,6 +146,37 @@ export class SocketService {
 
       if (index !== -1) {
         this.sendToRoom(room, 'sendRandomMessage', payload);
+      }
+    });
+  }
+
+  userSelectGame(clientId: string, title: string) {
+    this.rooms.forEach((clients, room) => {
+      const index = clients.findIndex((client) => client.clientId === clientId);
+
+      if (index !== -1) {
+        clients[index].isReady = true;
+
+        this.sendToRoom(room, 'userSelectGame', {
+          title,
+          clientId,
+        });
+      }
+    });
+  }
+
+  userResponseGameReq(clientId: string, response: string) {
+    this.rooms.forEach((clients, room) => {
+      const index = clients.findIndex((client) => client.clientId === clientId);
+
+      if (index !== -1) {
+        if (response === ChallengeResponseType.Accepted) {
+          clients[index].isReady = true;
+
+          this.sendToRoom(room, 'acceptGameChallenge', clients);
+        } else {
+          this.sendToRoom(room, 'rejectGameChallenge', {});
+        }
       }
     });
   }
