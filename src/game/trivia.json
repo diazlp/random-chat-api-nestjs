@@ -1,0 +1,102 @@
+[
+  {
+    "question": "The capital of France is _____.",
+    "answer": "Paris",
+    "hint": "Known as the 'City of Light.'"
+  },
+  {
+    "question": "The largest planet in our solar system is _____.",
+    "answer": "Jupiter",
+    "hint": "Fifth planet from the sun."
+  },
+  {
+    "question": "The Great Barrier Reef is located in the _____ Ocean.",
+    "answer": "Pacific",
+    "hint": "It's the world's largest coral reef system."
+  },
+  {
+    "question": "The currency used in Japan is the Japanese _____.",
+    "answer": "Yen",
+    "hint": "Symbol: ¥."
+  },
+  {
+    "question": "The inventor of the light bulb is _____.",
+    "answer": "Thomas Edison",
+    "hint": "A famous American inventor."
+  },
+  {
+    "question": "Mount Everest is the highest peak in the _____.",
+    "answer": "Himalayas",
+    "hint": "Part of the world's highest mountain range."
+  },
+  {
+    "question": "The currency used in Germany is the _____.",
+    "answer": "Euro",
+    "hint": "Member of the European Union."
+  },
+  {
+    "question": "The human heart has ____ chambers.",
+    "answer": "Four",
+    "hint": "A vital organ in the circulatory system."
+  },
+  {
+    "question": "The painting 'Mona Lisa' was created by _____.",
+    "answer": "Leonardo da Vinci",
+    "hint": "An Italian polymath."
+  },
+  {
+    "question": "The novel 'To Kill a Mockingbird' was written by _____.",
+    "answer": "Harper Lee",
+    "hint": "Won the Pulitzer Prize for Fiction."
+  },
+  {
+    "question": "The chemical symbol for gold is _____.",
+    "answer": "Au",
+    "hint": "Comes from the Latin word 'aurum.'"
+  },
+  {
+    "question": "The 'Big Apple' refers to _____.",
+    "answer": "New York City",
+    "hint": "A popular nickname for a city."
+  },
+  {
+    "question": "The currency used in India is the Indian _____.",
+    "answer": "Rupee",
+    "hint": "Official currency of the Republic of India."
+  },
+  {
+    "question": "The speed of light is approximately ____ meters per second.",
+    "answer": "299,792,458",
+    "hint": "Rounded to about 300,000 km/s."
+  },
+  {
+    "question": "The human brain has ____ hemispheres.",
+    "answer": "Two",
+    "hint": "Connected by the corpus callosum."
+  },
+  {
+    "question": "The planet closest to the sun is _____.",
+    "answer": "Mercury",
+    "hint": "Named after the Roman god of commerce."
+  },
+  {
+    "question": "The novel '1984' was written by _____.",
+    "answer": "George Orwell",
+    "hint": "Dystopian fiction classic."
+  },
+  {
+    "question": "The largest mammal on Earth is the _____.",
+    "answer": "Blue Whale",
+    "hint": "An ocean-dwelling giant."
+  },
+  {
+    "question": "The currency used in Brazil is the Brazilian _____.",
+    "answer": "Real",
+    "hint": "Symbol: R$."
+  },
+  {
+    "question": "The 'Eiffel Tower' is located in _____.",
+    "answer": "Paris",
+    "hint": "A famous iron landmark."
+  }
+]

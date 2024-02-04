@@ -1,14 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { ChallengeResponseType } from './socket.enum';
+import {
+  GameChallengeTitle,
+  ChallengeResponseType,
+  GameChallengeCommand,
+} from './socket.enum';
+import { TriviaService } from '../trivia/trivia.service';
 
 @Injectable()
 export class SocketService {
+  constructor(private readonly triviaService: TriviaService) {}
+
+  private readonly _SYSCLIENT: string = 'system';
   private connectedClients: Map<string, Socket> = new Map();
   private rooms: Map<
     string,
-    { clientId: string; peerId: string; isReady?: boolean }[]
+    { clientId: string; peerId: string; isGameReady?: boolean }[]
   > = new Map();
+  private roomGames: Map<
+    string,
+    {
+      currentGame: string;
+      currentChallenge: any;
+    }
+  > = new Map();
+
+  private getClientIndex(clients: any[], clientId: string): number {
+    return clients.findIndex((client) => client.clientId === clientId);
+  }
 
   handleConnection(socket: Socket): void {
     const clientId = socket.id;
@@ -30,7 +49,8 @@ export class SocketService {
 
     // Remove the client from any rooms it may have joined
     this.rooms.forEach((clients, room) => {
-      const index = clients.findIndex((client) => client.clientId === clientId);
+      const index = this.getClientIndex(clients, clientId);
+
       if (index !== -1) {
         clients.splice(index, 1);
         this.sendToRoom(room, 'message', `${clientId} left the room`);
@@ -111,7 +131,8 @@ export class SocketService {
   leaveRandomRoom(clientId: string, peerId: string): void {
     // Remove the client from any rooms it may have joined
     this.rooms.forEach((clients, room) => {
-      const index = clients.findIndex((client) => client.clientId === clientId);
+      const index = this.getClientIndex(clients, clientId);
+
       if (index !== -1) {
         const senderInfo = clients[index];
 
@@ -142,20 +163,33 @@ export class SocketService {
     payload: { clientId: string; message: string; time: Date },
   ) {
     this.rooms.forEach((clients, room) => {
-      const index = clients.findIndex((client) => client.clientId === clientId);
+      const index = this.getClientIndex(clients, clientId);
 
       if (index !== -1) {
         this.sendToRoom(room, 'sendRandomMessage', payload);
+
+        // Check if all clients in the room are in a game challenge
+        const isGameChat = clients.every((client) => client.isGameReady);
+        if (isGameChat) {
+          clients.every((client) => client.isGameReady) &&
+            this.sendGameMessage(room, payload.message, payload.clientId);
+        }
       }
     });
   }
 
   userSelectGame(clientId: string, title: string) {
     this.rooms.forEach((clients, room) => {
-      const index = clients.findIndex((client) => client.clientId === clientId);
+      const index = this.getClientIndex(clients, clientId);
 
       if (index !== -1) {
-        clients[index].isReady = true;
+        clients[index].isGameReady = true;
+
+        // Initiate game room title
+        this.roomGames.set(room, {
+          currentGame: title,
+          currentChallenge: {},
+        });
 
         this.sendToRoom(room, 'userSelectGame', {
           title,
@@ -167,18 +201,87 @@ export class SocketService {
 
   userResponseGameReq(clientId: string, response: string) {
     this.rooms.forEach((clients, room) => {
-      const index = clients.findIndex((client) => client.clientId === clientId);
+      const index = this.getClientIndex(clients, clientId);
 
       if (index !== -1) {
         if (response === ChallengeResponseType.Accepted) {
-          clients[index].isReady = true;
+          clients[index].isGameReady = true;
 
+          // Accept game challenge by sending all the game participants
           this.sendToRoom(room, 'acceptGameChallenge', clients);
+
+          // Signal to send the first question
+          this.sendGameMessage(room, GameChallengeCommand.NEXT);
         } else {
+          // Remove the game room if the challenge is rejected
+          this.roomGames.delete(room);
+
           this.sendToRoom(room, 'rejectGameChallenge', {});
         }
       }
     });
+  }
+
+  private sendGameMessage(
+    room: string,
+    clientMessage: string,
+    clientId?: string,
+  ) {
+    // Retrieve the game state from the roomGames map
+    const gameState = this.roomGames.get(room);
+
+    if (gameState) {
+      const { currentGame, currentChallenge } = gameState;
+
+      if (currentGame === GameChallengeTitle.Trivia) {
+        if (clientMessage === GameChallengeCommand.HINT) {
+          // Send the current game challenge hint
+          this.sendToRoom(room, 'sendGameChallenge', {
+            clientId: this._SYSCLIENT,
+            message: currentChallenge.hint,
+            time: new Date(),
+          });
+        } else if (clientMessage === GameChallengeCommand.STOP) {
+          this.roomGames.delete(room);
+
+          const clients = this.rooms.get(room);
+          if (clients) {
+            clients.forEach((client) => {
+              delete client.isGameReady;
+            });
+          }
+
+          this.sendToRoom(room, 'sendGameChallenge', {
+            clientId: this._SYSCLIENT,
+            message: 'Game challenge has ended.',
+            time: new Date(),
+          });
+
+          this.sendToRoom(room, 'stopGameChallenge', {});
+        } else if (clientMessage === GameChallengeCommand.NEXT) {
+          setTimeout(() => {
+            const trivia = this.triviaService.getRandomTrivia();
+
+            // Update the currentChallenge with the new trivia
+            this.roomGames.set(room, {
+              currentGame,
+              currentChallenge: trivia,
+            });
+
+            // Send the game challenge message with the new trivia
+            this.sendToRoom(room, 'sendGameChallenge', {
+              clientId: this._SYSCLIENT,
+              message: trivia.question,
+              time: new Date(),
+            });
+          }, 1000);
+        } else if (
+          clientMessage.toLowerCase() === currentChallenge.answer.toLowerCase()
+        ) {
+          this.sendToRoom(room, 'guessedGameChallenge', clientId);
+        }
+      }
+    }
   }
 
   private sendToRoom(roomName: string, event: string, data: any): void {
