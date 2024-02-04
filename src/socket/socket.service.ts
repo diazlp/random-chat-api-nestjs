@@ -82,6 +82,44 @@ export class SocketService {
     socket.emit('guestCount', guestCount);
   }
 
+  private generateRandomRoomName(): string {
+    return Math.random().toString(36).substring(2);
+  }
+
+  private findAvailableRoom(): string | undefined {
+    // Find a room with one client (i.e., an available room)
+    const availableRoom = Array.from(this.rooms.keys()).find((roomName) => {
+      const clientsInRoom = this.rooms.get(roomName);
+      return clientsInRoom && clientsInRoom.length === 1;
+    });
+
+    return availableRoom;
+  }
+
+  private sendToRoom(roomName: string, event: string, data: any): void {
+    const clientsInRoom = this.rooms.get(roomName) || [];
+
+    this.connectedClients.forEach((socket, clientId) => {
+      // Check if the client is in the room based on clientId
+      const isInRoom = clientsInRoom.some(
+        (client) => client.clientId === clientId,
+      );
+
+      if (isInRoom) {
+        socket.emit(event, data);
+      }
+    });
+  }
+
+  //     // Room is full, send a message to the client
+  //     this.sendToClient(clientId, 'message', 'Room is full');
+  private sendToClient(clientId: string, event: string, data: any): void {
+    const socket = this.connectedClients.get(clientId);
+    if (socket) {
+      socket.emit(event, data);
+    }
+  }
+
   joinRandomRoom(clientId: string, peerId: string): void {
     const availableRoom = this.findAvailableRoom();
     const generatedRoomName = availableRoom || this.generateRandomRoomName();
@@ -230,95 +268,75 @@ export class SocketService {
     // Retrieve the game state from the roomGames map
     const gameState = this.roomGames.get(room);
 
-    if (gameState) {
-      const { currentGame, currentChallenge } = gameState;
+    const { currentGame, currentChallenge } = gameState;
 
-      if (currentGame === GameChallengeTitle.Trivia) {
-        if (clientMessage === GameChallengeCommand.HINT) {
-          // Send the current game challenge hint
-          this.sendToRoom(room, 'sendGameChallenge', {
-            clientId: this._SYSCLIENT,
-            message: currentChallenge.hint,
-            time: new Date(),
-          });
-        } else if (clientMessage === GameChallengeCommand.STOP) {
-          this.roomGames.delete(room);
+    if (currentGame === GameChallengeTitle.Trivia) {
+      switch (clientMessage) {
+        case GameChallengeCommand.NEXT:
+          this.sendGameQuestion(room, currentGame);
+          break;
 
-          const clients = this.rooms.get(room);
-          if (clients) {
-            clients.forEach((client) => {
-              delete client.isGameReady;
-            });
+        case GameChallengeCommand.STOP:
+          this.stopGameChallenge(room);
+          break;
+
+        case GameChallengeCommand.HINT:
+          this.sendGameHint(room, currentChallenge.hint);
+          break;
+
+        default:
+          if (
+            clientMessage.toLowerCase() ===
+            currentChallenge.answer.toLowerCase()
+          ) {
+            this.sendChallengeHasGuessed(room, clientId);
           }
-
-          this.sendToRoom(room, 'sendGameChallenge', {
-            clientId: this._SYSCLIENT,
-            message: 'Game challenge has ended.',
-            time: new Date(),
-          });
-
-          this.sendToRoom(room, 'stopGameChallenge', {});
-        } else if (clientMessage === GameChallengeCommand.NEXT) {
-          setTimeout(() => {
-            const trivia = this.triviaService.getRandomTrivia();
-
-            // Update the currentChallenge with the new trivia
-            this.roomGames.set(room, {
-              currentGame,
-              currentChallenge: trivia,
-            });
-
-            // Send the game challenge message with the new trivia
-            this.sendToRoom(room, 'sendGameChallenge', {
-              clientId: this._SYSCLIENT,
-              message: trivia.question,
-              time: new Date(),
-            });
-          }, 1000);
-        } else if (
-          clientMessage.toLowerCase() === currentChallenge.answer.toLowerCase()
-        ) {
-          this.sendToRoom(room, 'guessedGameChallenge', clientId);
-        }
+          break;
       }
     }
   }
 
-  private sendToRoom(roomName: string, event: string, data: any): void {
-    const clientsInRoom = this.rooms.get(roomName) || [];
+  private sendGameQuestion(room: string, currentGame: string) {
+    setTimeout(() => {
+      const trivia = this.triviaService.getRandomTrivia();
+      this.roomGames.set(room, { currentGame, currentChallenge: trivia });
 
-    this.connectedClients.forEach((socket, clientId) => {
-      // Check if the client is in the room based on clientId
-      const isInRoom = clientsInRoom.some(
-        (client) => client.clientId === clientId,
-      );
-
-      if (isInRoom) {
-        socket.emit(event, data);
-      }
-    });
+      this.sendToRoom(room, 'sendGameChallenge', {
+        clientId: this._SYSCLIENT,
+        message: trivia.question,
+        time: new Date(),
+      });
+    }, 1000);
   }
 
-  //     // Room is full, send a message to the client
-  //     this.sendToClient(clientId, 'message', 'Room is full');
-  private sendToClient(clientId: string, event: string, data: any): void {
-    const socket = this.connectedClients.get(clientId);
-    if (socket) {
-      socket.emit(event, data);
+  private stopGameChallenge(room: string) {
+    this.roomGames.delete(room);
+
+    const clients = this.rooms.get(room);
+    if (clients) {
+      clients.forEach((client) => {
+        delete client.isGameReady;
+      });
     }
-  }
 
-  private generateRandomRoomName(): string {
-    return Math.random().toString(36).substring(2);
-  }
-
-  private findAvailableRoom(): string | undefined {
-    // Find a room with one client (i.e., an available room)
-    const availableRoom = Array.from(this.rooms.keys()).find((roomName) => {
-      const clientsInRoom = this.rooms.get(roomName);
-      return clientsInRoom && clientsInRoom.length === 1;
+    this.sendToRoom(room, 'sendGameChallenge', {
+      clientId: this._SYSCLIENT,
+      message: 'Game challenge has ended.',
+      time: new Date(),
     });
 
-    return availableRoom;
+    this.sendToRoom(room, 'stopGameChallenge', {});
+  }
+
+  private sendGameHint(room: string, gameHint: string) {
+    this.sendToRoom(room, 'sendGameChallenge', {
+      clientId: this._SYSCLIENT,
+      message: gameHint,
+      time: new Date(),
+    });
+  }
+
+  private sendChallengeHasGuessed(room: string, clientId?: string) {
+    this.sendToRoom(room, 'guessedGameChallenge', clientId);
   }
 }
