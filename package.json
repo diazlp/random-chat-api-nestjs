@@ -1,10 +1,10 @@
 {
   "name": "ranchat-v2-api-nestjs",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "An engaging NestJS application offering real-time multiplayer chat-based games, allowing users to connect, select from a variety of games, and enjoy interactive challenges with their peers.",
+  "author": "Diaz Linggaputra",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
