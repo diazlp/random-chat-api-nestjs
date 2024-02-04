@@ -1,102 +1,222 @@
 [
   {
-    "question": "The capital of France is _____.",
+    "question": "______ _________ is the last queen of England.",
+    "answer": "Queen Elizabeth",
+    "hint": "British monarch"
+  },
+  {
+    "question": "\"I am ____ ___\" is the most famous line in Avengers.",
+    "answer": "Iron Man",
+    "hint": "Genius, billionaire, playboy, philanthropist"
+  },
+  {
+    "question": "The capital city of France is _____.",
     "answer": "Paris",
-    "hint": "Known as the 'City of Light.'"
+    "hint": "City of Love"
   },
   {
-    "question": "The largest planet in our solar system is _____.",
+    "question": "The largest planet in our solar system is _______.",
     "answer": "Jupiter",
-    "hint": "Fifth planet from the sun."
+    "hint": "Named after the king of the Roman gods"
   },
   {
-    "question": "The Great Barrier Reef is located in the _____ Ocean.",
-    "answer": "Pacific",
-    "hint": "It's the world's largest coral reef system."
-  },
-  {
-    "question": "The currency used in Japan is the Japanese _____.",
+    "question": "The currency used in Japan is ___.",
     "answer": "Yen",
-    "hint": "Symbol: ¥."
+    "hint": "Three letters, starts with 'Y'"
   },
   {
-    "question": "The inventor of the light bulb is _____.",
-    "answer": "Thomas Edison",
-    "hint": "A famous American inventor."
+    "question": "The Great Barrier Reef is located in the _______ Ocean.",
+    "answer": "Pacific",
+    "hint": "Largest and deepest ocean"
   },
   {
-    "question": "Mount Everest is the highest peak in the _____.",
-    "answer": "Himalayas",
-    "hint": "Part of the world's highest mountain range."
+    "question": "The author of 'Harry Potter' series is _._. _______.",
+    "answer": "J.K. Rowling",
+    "hint": "Famous British author"
   },
   {
-    "question": "The currency used in Germany is the _____.",
+    "question": "The Earth's largest continent is ____.",
+    "answer": "Asia",
+    "hint": "Home to countries like China and India"
+  },
+  {
+    "question": "The famous scientist who developed the theory of relativity is ______ ________.",
+    "answer": "Albert Einstein",
+    "hint": "E=mc^2"
+  },
+  {
+    "question": "The highest mountain in the world is _____ _______.",
+    "answer": "Mount Everest",
+    "hint": "Located in the Himalayas"
+  },
+  {
+    "question": "The currency of Germany is ____.",
     "answer": "Euro",
-    "hint": "Member of the European Union."
+    "hint": "Used by many European countries"
+  },
+  {
+    "question": "The smallest prime number is _.",
+    "answer": "2",
+    "hint": "Even and only divisible by 1 and itself"
+  },
+  {
+    "question": "The longest river in the world is ____.",
+    "answer": "Nile",
+    "hint": "Flows through Northeast Africa"
+  },
+  {
+    "question": "The famous painting 'Mona Lisa' is displayed in ______.",
+    "answer": "Louvre",
+    "hint": "World's largest art museum"
+  },
+  {
+    "question": "The element with the symbol 'O' is ______.",
+    "answer": "Oxygen",
+    "hint": "Critical for human respiration"
+  },
+  {
+    "question": "The fastest land animal is _______.",
+    "answer": "Cheetah",
+    "hint": "Known for its incredible speed"
+  },
+  {
+    "question": "The capital city of Australia is ________.",
+    "answer": "Canberra",
+    "hint": "Located between Sydney and Melbourne"
+  },
+  {
+    "question": "The largest mammal on Earth is ____ _____.",
+    "answer": "Blue Whale",
+    "hint": "Lives in the ocean and feeds on krill"
+  },
+  {
+    "question": "The famous playwright who wrote 'Romeo and Juliet' is _______ ___________.",
+    "answer": "William Shakespeare",
+    "hint": "Considered one of the greatest writers in English literature"
+  },
+  {
+    "question": "The inventor of the telephone is _________ ______ ____.",
+    "answer": "Alexander Graham Bell",
+    "hint": "Scottish-born scientist and inventor"
+  },
+  {
+    "question": "The Treaty of __________ ended World War I in 1919.",
+    "answer": "Versailles",
+    "hint": "Signed near Paris"
+  },
+  {
+    "question": "______ ______ was the leader of the Soviet Union during much of the Cold War.",
+    "answer": "Joseph Stalin",
+    "hint": "Succeeded Lenin"
+  },
+  {
+    "question": "The ____ Dynasty ruled China for over two millennia, making it one of the world's oldest continuous civilizations.",
+    "answer": "Qing",
+    "hint": "Last imperial dynasty"
+  },
+  {
+    "question": "_____ _____ was the first woman to win a Nobel Prize and remains the only person to win Nobel Prizes in two different scientific fields.",
+    "answer": "Marie Curie",
+    "hint": "Physicist and chemist"
+  },
+  {
+    "question": "The ______ War, fought from 1950 to 1953, was a conflict between North and South Korea.",
+    "answer": "Korean",
+    "hint": "Divided by the 38th parallel"
+  },
+  {
+    "question": "The _____ Wall, built during the Ming Dynasty, served as a defensive fortification in northern China.",
+    "answer": "Great",
+    "hint": "World Heritage Site"
+  },
+  {
+    "question": "The _______ Plague, also known as the Black Death, swept through Europe in the 14th century.",
+    "answer": "Bubonic",
+    "hint": "Caused by Yersinia pestis bacterium"
+  },
+  {
+    "question": "Water is composed of two elements, hydrogen and ______.",
+    "answer": "Oxygen",
+    "hint": "Essential for life"
+  },
+  {
+    "question": "The chemical symbol for gold is __.",
+    "answer": "Au",
+    "hint": "A noble metal"
+  },
+  {
+    "question": "The process by which plants make their own food using sunlight is called ______________.",
+    "answer": "Photosynthesis",
+    "hint": "Involves chlorophyll in plant cells"
+  },
+  {
+    "question": "The Earth's outermost layer is called the _____.",
+    "answer": "Crust",
+    "hint": "Includes continents and ocean floor"
+  },
+  {
+    "question": "The chemical symbol for iron is __.",
+    "answer": "Fe",
+    "hint": "Common metal in construction and machinery"
   },
   {
     "question": "The human heart has ____ chambers.",
     "answer": "Four",
-    "hint": "A vital organ in the circulatory system."
+    "hint": "Includes left and right atria and ventricles"
   },
   {
-    "question": "The painting 'Mona Lisa' was created by _____.",
-    "answer": "Leonardo da Vinci",
-    "hint": "An Italian polymath."
+    "question": "The smallest unit of an element that retains its chemical properties is a(n) ____.",
+    "answer": "Atom",
+    "hint": "Composed of protons, neutrons, and electrons"
   },
   {
-    "question": "The novel 'To Kill a Mockingbird' was written by _____.",
-    "answer": "Harper Lee",
-    "hint": "Won the Pulitzer Prize for Fiction."
+    "question": "The lead singer of Queen was _______ _______.",
+    "answer": "Freddie Mercury",
+    "hint": "Known for powerful vocals"
   },
   {
-    "question": "The chemical symbol for gold is _____.",
-    "answer": "Au",
-    "hint": "Comes from the Latin word 'aurum.'"
+    "question": "The 'King of Pop' is a nickname for ______ _______.",
+    "answer": "Michael Jackson",
+    "hint": "Thriller, Bad, and Dangerous"
   },
   {
-    "question": "The 'Big Apple' refers to _____.",
-    "answer": "New York City",
-    "hint": "A popular nickname for a city."
+    "question": "The famous composer of 'Moonlight Sonata' and 'Fur Elise' is ______ ___ Beethoven.",
+    "answer": "Ludwig van",
+    "hint": "German composer and pianist"
   },
   {
-    "question": "The currency used in India is the Indian _____.",
-    "answer": "Rupee",
-    "hint": "Official currency of the Republic of India."
+    "question": "The lead singer of Nirvana was ________ ______.",
+    "answer": "Kurt Cobain",
+    "hint": "Grunge music pioneer"
   },
   {
-    "question": "The speed of light is approximately ____ meters per second.",
-    "answer": "299,792,458",
-    "hint": "Rounded to about 300,000 km/s."
+    "question": "The character Jack Dawson is featured in the movie _______.",
+    "answer": "Titanic",
+    "hint": "Romantic drama directed by James Cameron"
   },
   {
-    "question": "The human brain has ____ hemispheres.",
-    "answer": "Two",
-    "hint": "Connected by the corpus callosum."
+    "question": "The film 'The ________ Redemption' is based on a Stephen King novella and is often regarded as one of the greatest films of all time.",
+    "answer": "Shawshank",
+    "hint": "Released in 1994"
   },
   {
-    "question": "The planet closest to the sun is _____.",
-    "answer": "Mercury",
-    "hint": "Named after the Roman god of commerce."
+    "question": "In the movie '_______ ____,' the main character utters the famous line, 'Life is like a box of chocolates.'",
+    "answer": "Forrest Gump",
+    "hint": "Starring Tom Hanks"
   },
   {
-    "question": "The novel '1984' was written by _____.",
-    "answer": "George Orwell",
-    "hint": "Dystopian fiction classic."
+    "question": "The movie '____ _______,' directed by Quentin Tarantino, is known for its non-linear narrative and memorable dialogue.",
+    "answer": "Pulp Fiction",
+    "hint": "Released in 1994"
   },
   {
-    "question": "The largest mammal on Earth is the _____.",
-    "answer": "Blue Whale",
-    "hint": "An ocean-dwelling giant."
+    "question": "The fantasy film series based on J.K. Rowling's novels is titled '_____ ______.'",
+    "answer": "Harry Potter",
+    "hint": "Follows a young wizard's journey"
   },
   {
-    "question": "The currency used in Brazil is the Brazilian _____.",
-    "answer": "Real",
-    "hint": "Symbol: R$."
-  },
-  {
-    "question": "The 'Eiffel Tower' is located in _____.",
-    "answer": "Paris",
-    "hint": "A famous iron landmark."
+    "question": "The superhero film '_____ _______' introduces the Marvel character T'Challa, also known as the Black Panther.",
+    "answer": "Black Panther",
+    "hint": "Wakanda forever!"
   }
 ]
